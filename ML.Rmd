@@ -32,10 +32,12 @@ confusionMatrix(predictclass,subTest$classe)
 ```
 
 #Random Forest
-```{r}
+```{r,include=TRUE}
 require(randomForest)
+require(stats)
 modelrandom<-randomForest(classe~.,subTrain,method="class")
 predictrandom<-predict(modelrandom,subTest,type="class")
 confusionMatrix(predictrandom,subTest$classe)
+plot(modelrandom)
 #As shown in the summary, random forest algorithm performed better predictive analysis than decision tree. 
 ```
