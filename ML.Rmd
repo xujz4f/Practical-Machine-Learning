@@ -1,0 +1,41 @@
+---
+title: "Prediction Assignment"
+author: "xujz4f"
+date: "February 13, 2017"
+output: html_document
+---
+
+#Data preparasion
+```{r}
+set.seed(2345)
+Train<-read.csv("C:/Users/Jiadi/Desktop/CourseraDataScience/ML/pml-training.csv",head=TRUE,na.strings=c("#DIV/0!","","NA"))
+Test<-read.csv("C:/Users/Jiadi/Desktop/CourseraDataScience/ML/pml-testing.csv",head=TRUE,na.strings=c("#DIV/0!","","NA"))
+dim(Train)
+dim(Test)
+summary(Train$classe)
+Train<-Train[,-colSums(is.na(Train))==0]
+```
+
+#Cross Validation Decision Tree
+```{r,include=TRUE}
+require(ggplot2)
+require(caret)
+require(rpart)
+require(rpart.plot)
+sub<-createDataPartition(Train$classe,p=0.6,list=FALSE)
+subTrain<-Train[sub,]
+subTest<-Train[-sub,]
+modelclass<-rpart(classe ~ .,data=subTrain,method="class")
+predictclass<-predict(modelclass,subTest,type="class")
+rpart.plot(modelclass)
+confusionMatrix(predictclass,subTest$classe)
+```
+
+#Random Forest
+```{r}
+require(randomForest)
+modelrandom<-randomForest(classe~.,subTrain,method="class")
+predictrandom<-predict(modelrandom,subTest,type="class")
+confusionMatrix(predictrandom,subTest$classe)
+#As shown in the summary, random forest algorithm performed better predictive analysis than decision tree. 
+```
